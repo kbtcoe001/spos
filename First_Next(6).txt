@@ -1,0 +1,113 @@
+#include <iostream>
+using namespace std;
+
+void first(int block[], int m, int process[], int n)
+{
+    int allocation[n];
+    for (int i = 0; i < n; i++)
+        allocation[i] = -1;
+
+    for (int i = 0; i < n; i++)
+    {
+
+        for (int j = 0; j < m; j++)
+        {
+
+            if (block[j] >= process[i])
+            {
+                allocation[i] = j;
+                block[j] -= process[i];
+                break;
+            }
+        }
+    }
+    cout << "Process" << "\t"<< "Process Block"<< "\t" << "Block No";
+    cout << endl;
+    for (int i = 0; i < n; i++)
+    {
+        cout << i + 1 << "\t" << process[i] << "\t";
+        if (allocation[i] != -1)
+            cout << allocation[i] + 1;
+        else
+            cout << "Not Allocated";
+        cout << endl;
+    }
+    cout << "\nBlock Sizes :: ";
+    for (int i = 0; i < m; i++)
+        cout << " " << block[i];
+ }
+void next(int block[], int m, int process[], int n)
+{
+    int allocation[n];
+    for (int i = 0; i < n; i++)
+        allocation[i] = -1;
+
+    for (int i = 0; i < n; i++)
+    {
+        int j = 0;
+        int t = m - 1;
+        while (j < m)
+        {
+            if (block[j] >= process[i])
+            {
+                allocation[i] = j;
+                block[j] -= process[i];
+                t = (j - 1) % m;
+                break;
+            }
+            if (t == j)
+            {
+                t = (j - 1) % m;
+                break;
+            }
+            j = (j + 1) % m;
+        }
+    }
+    cout << "Process"<< "\t"<< "Process Block"<< "\t"<< "Block No";
+    cout << endl;
+    for (int i = 0; i < n; i++)
+    {
+        cout << i + 1 << "\t" << process[i] << "\t";
+        if (allocation[i] != -1)
+            cout << allocation[i] + 1;
+        else
+            cout << "Not Allocated";
+        cout << endl;
+    }
+    cout << "\nBlock Sizes :: ";
+    for (int i = 0; i < m; i++)
+        cout << " " << block[i];
+}
+
+int main()
+{
+    int block[] = {100, 500, 200, 300, 600};
+    int m = sizeof(block) / sizeof(block[0]);
+    int process[] = {212, 417, 112, 426};
+    int n = sizeof(process) / sizeof(process[0]);
+    first(block, m, process, n);
+
+    int blockS[] = {5, 10, 20};
+    int a = sizeof(blockS) / sizeof(blockS[0]);
+    int processS[] = {10, 10, 5};
+    int b = sizeof(processS) / sizeof(processS[0]);
+    next(blockS, a, processS, b);
+
+    return 0;
+}
+
+/*
+Process Process Block   Block No
+1       212     2
+2       417     5
+3       112     2
+4       426     Not Allocated
+
+Block Sizes ::  100 176 200 300 183Process      Process Block   Block No
+1       10      2
+2       10      3
+3       5       1
+
+Block Sizes ::  0 0 10
+
+*/

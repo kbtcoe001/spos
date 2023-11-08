@@ -1,0 +1,224 @@
+import java.util.Scanner;
+public class FCFS_SJF {
+	static void firstcome()
+	{
+		Scanner sc=new Scanner(System.in);
+		System.out.println("Enter the no of process");
+		int n=sc.nextInt();
+		int arrival[]=new int[n];
+		int burst[]=new int[n];
+		int waiting[]=new int[n];
+		int turnaround[]=new int[n];
+		System.out.println("Enter the arrival and burst time");
+		for(int i=0;i<n;i++)
+		{
+			System.out.println("Process "+(i+1)+" Arrival time");
+			arrival[i]=sc.nextInt();
+			System.out.println("Process "+(i+1)+" Burst time");
+			burst[i]=sc.nextInt();
+
+		}
+		int Twaiting=0;
+		int Tturnaround=0;
+		for(int i=0;i<n;i++)
+		{
+			if(i==0)
+				waiting[i]=0;
+			else {
+				waiting[i]=(waiting[i-1]+burst[i-1]+arrival[i-1])-arrival[i];
+			}
+			turnaround[i]=waiting[i]+burst[i];
+			Twaiting+=waiting[i];
+			Tturnaround+=turnaround[i];
+		}
+		System.out.println("Process\t\tArrival Time\tBurst Time\tWaiting Time\tTurnaround Time");
+		for(int i=0;i<n;i++)
+		{
+			System.out.println("Process"+(i+1)+"\t\t"+arrival[i]+"\t\t"+burst[i]+"\t\t"+waiting[i]+"\t\t"+turnaround[i]);
+			
+		}
+		double avgw=(double)Twaiting/n;
+		double avgt=(double)Tturnaround/n;	
+		System.out.println("Average waiting time ="+avgw);
+		System.out.println("Average turnaround time ="+avgt);
+		
+	}
+	
+	static void findWaitingTime(int processes[], int n,int arrival[],int bt[],int wt[]) 
+    { 
+        int rt[] = new int[n]; 
+       
+        for (int i = 0; i < n; i++) 
+            rt[i] = bt[i]; 
+       
+        int complete = 0, t = 0, minm = Integer.MAX_VALUE; 
+        int shortest = 0, finish_time; 
+        boolean check = false; 
+        while (complete != n) { 
+            for (int j = 0; j < n; j++)  
+            { 
+                if (arrival[j] <= t && (rt[j] < minm) && rt[j] > 0) { 
+                    minm = rt[j]; 
+                    shortest = j; 
+                    check = true; 
+                } 
+            } 
+            if (check == false) { 
+                t++; 
+                continue; 
+            } 
+       
+            rt[shortest]--; 
+       
+            minm = rt[shortest]; 
+            if (minm == 0) 
+                minm = Integer.MAX_VALUE; 
+       
+            if (rt[shortest] == 0) 
+            { 
+                complete++; 
+                check = false; 
+                finish_time = t + 1; 
+                wt[shortest] = finish_time - bt[shortest] - arrival[shortest]; 
+                if (wt[shortest] < 0) 
+                    wt[shortest] = 0; 
+            }  
+            t++; 
+        } 
+    } 
+       
+    static void findTurnAroundTime(int processes[], int n, int bt[],int wt[],int arrival[], int tat[]) 
+    {  
+        for (int i = 0; i < n; i++) 
+            tat[i] =bt[i] + wt[i]; 
+    } 
+    
+    static void findavgTime(int processes[],int arrival[],int bt[], int n) 
+    { 
+        int wt[] = new int[n], tat[] = new int[n]; 
+        int  total_wt = 0, total_tat = 0; 
+       
+        findWaitingTime(processes,n,arrival,bt,wt); 
+        findTurnAroundTime(processes,n,bt,wt,arrival, tat); 
+        System.out.println("Processes " + " Burst time " + " Waiting time " + " Turn around time"); 
+        for (int i = 0; i < n; i++) { 
+            total_wt = total_wt + wt[i]; 
+            total_tat = total_tat + tat[i]; 
+            System.out.println("Process" +(i+1)+ "\t\t"+bt[i] + "\t\t " + wt[i] + "\t\t" + tat[i]); 
+        } 
+       
+        System.out.println("Average waiting time = " + 
+                          (float)total_wt / (float)n); 
+        System.out.println("Average turn around time = " + 
+                           (float)total_tat / (float)n); 
+    } 
+
+	public static void main(String[] args) {
+		Scanner s=new Scanner(System.in);
+		while(true)
+		{
+			int ch;
+			System.out.println("Enter 1-FCFS 2- SJF 3-EXIT");
+			ch=s.nextInt();
+			if(ch==1)
+			{
+				firstcome();
+			}
+			else if(ch==2)
+			{
+				int n;
+				System.out.println("Enter no of process");
+				n=s.nextInt();
+				
+				int processes[]=new int[n];
+				int bt[]=new int[n];
+				int arrival[]=new int[n];
+				
+				System.out.println("Enter the process no and burst time");
+				for(int i=0;i<n;i++)
+				{
+					processes[i]=s.nextInt();
+					bt[i]=s.nextInt();
+				}
+				System.out.println("Enter arrival time");
+				for(int i=0;i<n;i++)
+				{
+					arrival[i]=s.nextInt();
+					
+				}
+				findavgTime(processes,arrival,bt, n);
+			}
+			else if(ch==3)
+			{
+				System.out.println("THANK YOU");
+				break;
+			}
+			
+		}
+
+	}
+
+}
+
+/*
+Enter 1-FCFS 2- SJF 3-EXIT
+1
+Enter the no of process
+4
+Enter the arrival and burst time
+Process 1 Arrival time
+0
+Process 1 Burst time
+2
+Process 2 Arrival time
+1
+Process 2 Burst time
+4
+Process 3 Arrival time
+2
+Process 3 Burst time
+5
+Process 4 Arrival time
+3
+Process 4 Burst time
+6
+Process		Arrival Time	Burst Time	Waiting Time	Turnaround Time
+Process1		0		2		0		2
+Process2		1		4		1		5
+Process3		2		5		4		9
+Process4		3		6		8		14
+Average waiting time =3.25
+Average turnaround time =7.5
+Enter 1-FCFS 2- SJF 3-EXIT
+2
+Enter no of process
+5
+Enter the process no and burst time
+1
+6
+2
+2
+3
+8
+4
+3
+5
+4
+Enter arrival time
+2
+5
+1
+0
+4
+Processes  Burst time  Waiting time  Turn around time
+Process1		6		 7		13
+Process2		2		 0		2
+Process3		8		 14		22
+Process4		3		 0		3
+Process5		4		 2		6
+Average waiting time = 4.6
+Average turn around time = 9.2
+Enter 1-FCFS 2- SJF 3-EXIT
+3
+THANK YOU
+*/

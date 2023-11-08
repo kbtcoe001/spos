@@ -1,0 +1,202 @@
+import java.util.Scanner;
+public class fcfs {
+	static void firstcome()
+	{
+		Scanner sc=new Scanner(System.in);
+		System.out.println("Enter the no of process");
+		int n=sc.nextInt();
+		int arrival[]=new int[n];
+		int burst[]=new int[n];
+		int waiting[]=new int[n];
+		int turnaround[]=new int[n];
+		System.out.println("Enter the arrival and burst time");
+		for(int i=0;i<n;i++)
+		{
+			System.out.println("Process "+(i+1)+" Arrival time");
+			arrival[i]=sc.nextInt();
+			System.out.println("Process "+(i+1)+" Burst time");
+			burst[i]=sc.nextInt();
+
+		}
+		int Twaiting=0;
+		int Tturnaround=0;
+		for(int i=0;i<n;i++)
+		{
+			if(i==0)
+				waiting[i]=0;
+			else {
+				waiting[i]=(waiting[i-1]+burst[i-1]+arrival[i-1])-arrival[i];
+			}
+			turnaround[i]=waiting[i]+burst[i];
+			Twaiting+=waiting[i];
+			Tturnaround+=turnaround[i];
+		}
+		System.out.println("Process\t\tArrival Time\tBurst Time\tWaiting Time\tTurnaround Time");
+		for(int i=0;i<n;i++)
+		{
+			System.out.println("Process"+(i+1)+"\t\t"+arrival[i]+"\t\t"+burst[i]+"\t\t"+waiting[i]+"\t\t"+turnaround[i]);
+			
+		}
+		double avgw=(double)Twaiting/n;
+		double avgt=(double)Tturnaround/n;	
+		System.out.println("Average waiting time ="+avgw);
+		System.out.println("Average turnaround time ="+avgt);
+		
+	}
+	 static void findWaitingTime(int processes[], int n,int bt[], int wt[], int quantum)
+	    {
+	        int rem_bt[] = new int[n];
+	        for (int i = 0 ; i < n ; i++)
+	            rem_bt[i] =  bt[i];
+	        int t = 0;
+	        while(true)
+	        {
+	            boolean done = true;
+	            for (int i = 0 ; i < n; i++)
+	            {
+	                if (rem_bt[i] > 0)
+	                {
+	                    done = false; 
+	                    if (rem_bt[i] > quantum)
+	                    {
+	                        t += quantum;
+	                        rem_bt[i] -= quantum;
+	                    }
+	                    else
+	                    { 
+	                        t = t + rem_bt[i];
+	                        wt[i] = t - bt[i];
+	                        rem_bt[i] = 0;
+	                    }
+	                }
+	            }
+	      
+	            if (done == true)
+	              break;
+	        }
+	    }
+	    static void findTurnAroundTime(int processes[], int n,int bt[], int wt[], int tat[])
+	    {
+	        
+	        for (int i = 0; i < n ; i++)
+	            tat[i] = bt[i] + wt[i];
+	    }
+	    
+	    static void findavgTime(int processes[], int n, int bt[],int quantum)
+	    {
+	        int wt[] = new int[n], tat[] = new int[n];
+	        int total_wt = 0, total_tat = 0;
+	      
+	        findWaitingTime(processes, n, bt, wt, quantum);
+	        findTurnAroundTime(processes, n, bt, wt, tat);
+	        System.out.println("PN " + "\tBT " + "\tWT " + "\tTAT");
+	        for (int i=0; i<n; i++)
+	        {
+	            total_wt = total_wt + wt[i];
+	            total_tat = total_tat + tat[i];
+	            System.out.println("P"+(i+1) + "\t" + bt[i] +"\t " +
+	                              wt[i] +"\t" + tat[i]);
+	        }
+	        System.out.println("Average waiting time = " +(float)total_wt / (float)n);
+	        System.out.println("Average turn around time = " +(float)total_tat / (float)n);
+	    }
+	public static void main(String[] args) {
+		Scanner s=new Scanner(System.in);
+
+		while(true)
+		{
+			int ch;
+			System.out.println("Enter 1-FCFS 2- Round Robin 3-EXIT");
+			ch=s.nextInt();
+			if(ch==1)
+			{
+				firstcome();
+			}
+			else if(ch==2)
+			{
+				int n,quantum;
+				System.out.println("Enter no of process");
+				n=s.nextInt();
+				System.out.println("Enter quantum time");
+				quantum=s.nextInt();
+				
+				int processes[]=new int[n];
+				int burst_time[]=new int[n];
+				System.out.println("Enter the process no and burst time");
+				for(int i=0;i<n;i++)
+				{
+					processes[i]=s.nextInt();
+					burst_time[i]=s.nextInt();
+				}
+				findavgTime(processes, n, burst_time, quantum);
+			}
+			else if(ch==3)
+			{
+				System.out.println("THANK YOU");
+				break;
+			}
+			
+		}
+		
+		
+		
+		
+	}
+
+}
+
+
+/*
+
+Enter 1-FCFS 2- Round Robin 3-EXIT
+1
+Enter the no of process
+4
+Enter the arrival and burst time
+Process 1 Arrival time
+0
+Process 1 Burst time
+5
+Process 2 Arrival time
+1
+Process 2 Burst time
+3
+Process 3 Arrival time
+4
+Process 3 Burst time
+6
+Process 4 Arrival time
+5
+Process 4 Burst time
+4
+Process		Arrival Time	Burst Time	Waiting Time	Turnaround Time
+Process1		0		5		0		5
+Process2		1		3		4		7
+Process3		4		6		4		10
+Process4		5		4		9		13
+Average waiting time =4.25
+Average turnaround time =8.75
+Enter 1-FCFS 2- Round Robin 3-EXIT
+2
+Enter no of process
+3
+Enter quantum time
+2
+Enter the process no and burst time
+1
+4
+2
+5
+3
+3
+PN 	BT 	WT 	TAT
+P1	4	 4	8
+P2	5	 7	12
+P3	3	 8	11
+Average waiting time = 6.3333335
+Average turn around time = 10.333333
+Enter 1-FCFS 2- Round Robin 3-EXIT
+3
+THANK YOU
+
+*/

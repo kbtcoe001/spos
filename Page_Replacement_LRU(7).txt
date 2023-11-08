@@ -1,0 +1,96 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+const int N = 100005;
+
+void lru_page_replacement(int frame_size, int n, int pages[]) {
+    unordered_map<int, list<int>::iterator> pageTable;
+    list<int> lruQueue; // Doubly linked list to maintain the order of page access
+    int page_faults = 0;
+    int page_hits = 0;
+
+    for (int i = 0; i < n; i++) {
+        int page = pages[i];
+
+        // Check if the page is in memory
+        if (pageTable.find(page) != pageTable.end()) {
+            // Page found in memory, update its position in the LRU queue
+            lruQueue.erase(pageTable[page]);
+            page_hits++;
+        } else {
+            // Page not found in memory, increment page fault counter
+            page_faults++;
+
+            // Check if the frame size is exceeded
+            if (lruQueue.size() >= frame_size) {
+                int lruPage = lruQueue.back();
+                lruQueue.pop_back();
+                pageTable.erase(lruPage);
+            }
+        }
+
+        // Add the current page to the front of the LRU queue
+        lruQueue.push_front(page);
+        pageTable[page] = lruQueue.begin();
+
+        cout << "Iteration " << i + 1 << ": Page Reference = " << page << ", Frames = [";
+        for (auto it = lruQueue.begin(); it != lruQueue.end(); ++it) {
+            cout << *it;
+            if (next(it) != lruQueue.end()) {
+                cout << ", ";
+            }
+        }
+        cout << "], Page Faults = " << page_faults << ", Page Hits = " << page_hits << endl;
+    }
+}
+
+int main() {
+    int frame_size = 4;
+    int pages[N];
+    int n;
+
+    cout << "Page Reference Stream Length: ";
+    cin >> n;
+    cout << "Page Reference Stream:\n";
+    for (int i = 0; i < n; i++)
+        cin >> pages[i];
+
+    lru_page_replacement(frame_size, n, pages);
+    return 0;
+}
+
+/*
+
+Page Reference Stream Length: 14
+Page Reference Stream:
+7
+0
+1
+2
+0
+3
+0
+4
+2
+3
+0  
+3
+2
+3
+Iteration 1: Page Reference = 7, Frames = [7], Page Faults = 1, Page Hits = 0
+Iteration 2: Page Reference = 0, Frames = [0, 7], Page Faults = 2, Page Hits = 0
+Iteration 3: Page Reference = 1, Frames = [1, 0, 7], Page Faults = 3, Page Hits = 0
+Iteration 4: Page Reference = 2, Frames = [2, 1, 0, 7], Page Faults = 4, Page Hits = 0
+Iteration 5: Page Reference = 0, Frames = [0, 2, 1, 7], Page Faults = 4, Page Hits = 1
+Iteration 6: Page Reference = 3, Frames = [3, 0, 2, 1], Page Faults = 5, Page Hits = 1
+Iteration 7: Page Reference = 0, Frames = [0, 3, 2, 1], Page Faults = 5, Page Hits = 2
+Iteration 8: Page Reference = 4, Frames = [4, 0, 3, 2], Page Faults = 6, Page Hits = 2
+Iteration 9: Page Reference = 2, Frames = [2, 4, 0, 3], Page Faults = 6, Page Hits = 3
+Iteration 10: Page Reference = 3, Frames = [3, 2, 4, 0], Page Faults = 6, Page Hits = 4
+Iteration 11: Page Reference = 0, Frames = [0, 3, 2, 4], Page Faults = 6, Page Hits = 5
+Iteration 12: Page Reference = 3, Frames = [3, 0, 2, 4], Page Faults = 6, Page Hits = 6
+Iteration 13: Page Reference = 2, Frames = [2, 3, 0, 4], Page Faults = 6, Page Hits = 7
+Iteration 14: Page Reference = 3, Frames = [3, 2, 0, 4], Page Faults = 6, Page Hits = 8
+
+
+*/

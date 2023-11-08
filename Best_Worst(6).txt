@@ -1,0 +1,200 @@
+#include <iostream>
+using namespace std;
+
+void best(int block[], int m, int process[], int n)
+{
+    int allocation[n];
+    for (int i = 0; i < n; i++)
+        allocation[i] = -1;
+
+    for (int i = 0; i < n; i++)
+    {
+        int bestIdx = -1;
+        for (int j = 0; j < m; j++)
+        {
+
+            if (block[j] >= process[i])
+            {
+                if (bestIdx == -1)
+                    bestIdx = j;
+                else if (block[bestIdx] > block[j])
+                    bestIdx = j;
+            }
+        }
+        if (bestIdx != -1)
+        {
+            allocation[i] = bestIdx;
+            block[bestIdx] -= process[i];
+        }
+    }
+    cout << "Process" << "\t" << "Process Block" << "\t" << "Block No";
+    cout << endl;
+    for (int i = 0; i < n; i++)
+    {
+        cout << i + 1 << "\t" << process[i] << "\t";
+        if (allocation[i] != -1)
+            cout << allocation[i] + 1;
+        else
+            cout << "Not Allocated";
+        cout << endl;
+    }
+    cout << "\nBlock Sizes :: ";
+    for (int i = 0; i < m; i++)
+        cout << " " << block[i];
+}
+
+void worst(int block[], int m, int process[], int n)
+{
+    int allocation[n];
+    for (int i = 0; i < n; i++)
+        allocation[i] = -1;
+
+    for (int i = 0; i < n; i++)
+    {
+        int worstIdx = -1;
+        for (int j = 0; j < m; j++)
+        {
+
+            if (block[j] >= process[i])
+            {
+                if (worstIdx == -1)
+                    worstIdx = j;
+                else if (block[worstIdx] < block[j])
+                    worstIdx = j;
+            }
+        }
+        if (worstIdx != -1)
+        {
+            allocation[i] = worstIdx;
+            block[worstIdx] -= process[i];
+        }
+    }
+    cout << "Process" << "\t" << "Process Block" << "\t" << "Block No";
+    cout << endl;
+    for (int i = 0; i < n; i++)
+    {
+        cout << i + 1 << "\t" << process[i] << "\t";
+        if (allocation[i] != -1)
+            cout << allocation[i] + 1;
+        else
+            cout << "Not Allocated";
+        cout << endl;
+    }
+    cout << "\nBlock Sizes :: ";
+    for (int i = 0; i < m; i++)
+        cout << " " << block[i];
+}
+int main()
+{
+    int a, b, c;
+    while (1)
+    {
+        cout << "Enter 1-best 2-worst 3-exit\n";
+        cin >> a;
+
+        if (a == 1)
+        {
+
+            int x, y;
+            cout << "Enter no of blocks\n";
+            cin >> x;
+            int blocks[x];
+            for (int i = 0; i < x; i++)
+            {
+                cout << "Enter size of blocks\n";
+                cin >> blocks[i];
+            }
+            cout << "Enter no of process\n";
+            cin >> y;
+            int process[y];
+            for (int i = 0; i < y; i++)
+            {
+                cout << "Enter size of process\n";
+                cin >> process[i];
+            }
+            best(blocks, x, process, y);
+        }
+        if (a == 2)
+        {
+
+            int x, y;
+            cout << "Enter no of blocks\n";
+            cin >> x;
+            int blocks[x];
+            for (int i = 0; i < x; i++)
+            {
+                cout << "Enter size of blocks\n";
+                cin >> blocks[i];
+            }
+            cout << "Enter no of process\n";
+            cin >> y;
+            int process[y];
+            for (int i = 0; i < y; i++)
+            {
+                cout << "Enter size of process\n";
+                cin >> process[i];
+            }
+            worst(blocks, x, process, y);
+        }
+        if (a == 3)
+            break;
+    }
+    return 0;
+}
+
+/*
+Enter 1-best 2-worst 3-exit
+1
+Enter no of blocks
+3
+Enter size of blocks
+100
+Enter size of blocks
+200
+Enter size of blocks
+300
+Enter no of process
+4
+Enter size of process
+150
+Enter size of process
+45
+Enter size of process
+290
+Enter size of process
+80
+Process Process Block   Block No
+1       150     2
+2       45      2
+3       290     3
+4       80      1
+
+Block Sizes ::  20 5 10Enter 1-best 2-worst 3-exit
+2
+Enter no of blocks
+4
+Enter size of blocks
+500
+Enter size of blocks
+600
+Enter size of blocks
+100
+Enter size of blocks
+800
+Enter no of process
+3  
+Enter size of process
+150
+Enter size of process
+260
+Enter size of process
+50
+Process Process Block   Block No
+1       150     4
+2       260     4
+3       50      2
+
+Block Sizes ::  500 550 100 390Enter 1-best 2-worst 3-exit
+3
+
+*/
